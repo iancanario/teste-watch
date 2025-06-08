@@ -24,5 +24,30 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  localstack:
+    image: localstack/localstack:3
+    ports:
+      - '4566:4566'
+    environment:
+      - SERVICES=sqs
+      - DEBUG=1
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - localstack:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "16686:16686"  # UI
+      - "4317:4317"    # OTLP gRPC
+      - "4318:4318"    # OTLP HTTP
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    volumes:
+      - jaeger-data:/var/lib/jaeger
+
 volumes:
   pgdata:
+  localstack:
+  jaeger-data:
